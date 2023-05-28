@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+    {
+    "name": "Terminal",
+    "program": "src/main.dart", // <=== NOM DU FICHIER A EXECUTER
+    "request": "launch",
+    "type": "dart",
+    "console": "terminal"
+    },
+    ]
+   }
+   
