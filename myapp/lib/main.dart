@@ -49,10 +49,8 @@ class _MyAppState extends State<MyApp> {
     final nameToAdd = controller.text.trim();
 
     if (nameToAdd.length < 3) {
-      showMessageError('Le texte doit contenir au moins 3 caractères');
-      return;
-    } else if (nameToAdd.isEmpty || nameToAdd.trim().isEmpty) {
-      showMessageError('Le nom ne peut pas être vide !');
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Vous de vez écrire au moins 3 lettres !')));
       return;
     }
 
@@ -64,13 +62,16 @@ class _MyAppState extends State<MyApp> {
       final trimmedPokemonName = lowercasePokemonName.trim();
 
       if (trimmedPokemonName == trimmedNameToAdd) {
-        showMessageError('Le Pokémon existe déjà dans la liste !');
-        return;
+        return showMessageError('Le Pokémon existe déjà dans la liste !');
       }
     }
 
     setState(() {
-      pokedex.add(Pokemon(icon: Icons.star, name: nameToAdd));
+      pokedex.insert(0, Pokemon(icon: Icons.architecture, name: nameToAdd));
+      if (nameToAdd.isEmpty || nameToAdd.trim().isEmpty) {
+        showMessageError('Le nom ne peut pas être vide !');
+        return;
+      }
     });
   }
 
@@ -83,64 +84,63 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        // <== définit le thème Light
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        // <== définit le thème Dark
-        brightness: Brightness.dark,
-      ),
-      themeMode: ThemeMode.dark,
-      home: ScaffoldMessenger(
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Première appli'),
-          ),
-          body: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: TextField(
-                            controller: controller,
-                            decoration: InputDecoration(
-                              labelText: 'Ecrivez un nom',
-                              border: InputBorder.none,
+        theme: ThemeData(
+          // <== définit le thème Light
+          brightness: Brightness.light,
+        ),
+        darkTheme: ThemeData(
+          // <== définit le thème Dark
+          brightness: Brightness.dark,
+        ),
+        themeMode: ThemeMode.dark,
+        home: ScaffoldMessenger(
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Première appli'),
+            ),
+            body: SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextField(
+                              controller: controller,
+                              decoration: InputDecoration(
+                                labelText: 'Ecrivez un nom',
+                                border: InputBorder.none,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Flexible(
-                        child: IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () => addPokemon(),
+                        Flexible(
+                          child: IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () => addPokemon(),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  for (int i = 0; i < pokedex.length; i++)
-                    if (!deletedIndexes.contains(i))
-                      TheAmazingRow(
-                        icon: pokedex[i].icon,
-                        label: pokedex[i].name.toUpperCase(),
-                        onDelete: () => removePokemon(i),
-                      ),
-                ],
+                      ],
+                    ),
+                    for (int i = 0; i < pokedex.length; i++)
+                      if (!deletedIndexes.contains(i))
+                        TheAmazingRow(
+                          icon: pokedex[i].icon,
+                          label: pokedex[i].name.toUpperCase(),
+                          onDelete: () => removePokemon(i),
+                        ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
 
