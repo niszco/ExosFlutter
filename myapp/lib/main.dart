@@ -6,8 +6,13 @@ void main() => runApp(
       MyApp(),
     );
 
+class PageName {
+  static const String home = '/';
+  static const String detail = '/detail_page';
+}
+
 class MyApp extends StatefulWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -132,7 +137,7 @@ class _MyAppState extends State<MyApp> {
                       if (!deletedIndexes.contains(i))
                         TheAmazingRow(
                           icon: pokedex[i].icon,
-                          label: pokedex[i].name.toUpperCase(),
+                          label: pokedex[i].name,
                           onDelete: () => removePokemon(i),
                         ),
                   ],
@@ -140,7 +145,11 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
           ),
-        ));
+        ),
+        initialRoute: PageName.home,
+        routes: {
+          PageName.detail: (context) => const DetailPage(),
+        });
   }
 }
 
@@ -170,27 +179,67 @@ class TheAmazingRow extends StatefulWidget {
 class _TheAmazingRowState extends State<TheAmazingRow> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.3),
-          borderRadius: BorderRadius.circular(10),
+    final label = widget.label;
+    return InkWell(
+      onTap: () => Navigator.pushNamed(
+        context,
+        PageName.detail,
+        arguments: label,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
+          child: Row(
+            children: [
+              Icon(widget.icon),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(widget.label),
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: widget.onDelete,
+              ),
+            ],
+          ),
         ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-        child: Row(
+      ),
+    );
+  }
+}
+
+class DetailPage extends StatelessWidget {
+  const DetailPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final pokemonName = ModalRoute.of(context)!.settings.arguments as String;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Page détail'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(widget.icon),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(widget.label),
+            Text(
+              'Nom du Pokémon : $pokemonName',
+              style: TextStyle(fontSize: 24),
             ),
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: widget.onDelete,
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Retour'),
             ),
           ],
         ),
